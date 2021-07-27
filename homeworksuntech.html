@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Student management</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+    <div id="app">
+        <div class='container'>
+            <div class='container__header'>
+                <h1>Student Management</h1>
+            </div>
+
+            <input class='list-input' type='text' placeholder='name' v-model='student.name' /><br /><br />
+            <input class='list-input' type='text' placeholder='email' v-model='student.email' /><br /><br />
+            <input class='list-input' type='text' placeholder='phone' v-model='student.phone' /><br /><br />
+            <!-- <input class='list-input' type='text' placeholder='gender' v-model='student.gender' /><br /><br /> -->
+
+            <input type="radio" class="form-check-input" value="Nam" v-model="student.gender" name="optradio"> Nam
+            <input type="radio" class="form-check-input" value="Nữ" v-model="student.gender" name="optradio"> Nữ
+            <button @click='addstudent()'>Add Student</button><br /><br />
+
+            <table style="width:100%">
+                <tr>
+                    <th>name</th>
+                    <th>email</th>
+                    <th>phone</th>
+                    <th>gender</th>
+                    <th>action</th>
+
+                </tr>
+                <tr class='list'>
+                    <td>
+                        <p class='list__item' v-for="(student, index) in students"> {{ student.name }} </p>
+                    </td>
+                    <td>
+                        <p class='list__item' v-for="(student, index) in students"> {{ student.email }} </p>
+                    </td>
+                    <td>
+                        <p class='list__item' v-for="(student, index) in students"> {{ student.phone }} </p>
+                    </td>
+                    <td>
+                        <p class='list__item' v-for="(student, index) in students"> {{ student.gender }} </p>
+                    </td>
+                    <td class="action">
+                        <p class='list__item list__itemi' v-for="(student, index) in students"
+                            @click="deletestudent(index)"> delete</p>
+                        <p class='list__item list__itemi' v-for="(student, index) in students" @click="edit(index)">Edit
+                        </p>
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    student: {
+                        id: '',
+                        name: '',
+                        email: '',
+                        phone: '',
+                        gender: '',
+
+                    },
+                    students: []
+                }
+            },
+            methods: {
+                addstudent() {
+
+                    if ((_.isEmpty(this.student.name)) || (_.isEmpty(this.student.phone)) || (_.isEmpty(this.student.gender)) || (_.isEmpty(this.student.email))) {
+                        alert('cant be empty')
+                        return false
+                    }
+
+                    let student = {
+                        id: '',
+                        name: this.student.name,
+                        email: this.student.email,
+                        phone: this.student.phone,
+                        gender: this.student.gender
+                    }
+
+                    if (this.students.length === 0) {
+                        student.id = 1
+                    }
+
+                    if (this.students.length > 0) {
+                        let item = _.maxBy(this.students, function (item) { return item.id })
+                        student.id = item.id + 1
+                    }
+
+                    if (!student.id) {
+                        alert('student id can not blank')
+                        return false
+                    }
+
+                    this.students.push(student)
+
+                    this.student.name = '',
+                        this.student.email = '',
+                        this.student.phone = '',
+                        this.student.gender = ''
+                },
+                deletestudent(index) {
+                    if (confirm('delete?')) {
+                        this.students.splice(index, 1)
+                    }
+                },
+                edit(index) {
+                    this.ValidateData();
+                    this.data[this.idEdit].name = this.name;
+                    this.data[this.idEdit].email = this.email;
+                    this.data[this.idEdit].telephone = this.telephone;
+                    this.data[this.idEdit].gioitinh = this.gioitinh;
+                    // close form & show data table
+                    this.isForm = false;
+                    this.isShow = true;
+                    this.Title = 'Danh sách sinh viên';
+                },
+            }
+        }).mount('#app')
+    </script>
+</body>
+
+</html>
